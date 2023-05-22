@@ -15,7 +15,7 @@ jobs:
   publish:
     needs: [build]
     runs-on: ubuntu-latest
-    environment: development
+    environment: production
     steps:
       - uses: actions/checkout@v3
       - name: publish
