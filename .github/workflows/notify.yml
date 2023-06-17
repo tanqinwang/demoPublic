@@ -13,13 +13,14 @@ jobs:
     name: IM Notification
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Notify to IM
-      uses: echoings/actions.notify@v0.1.0
-      with:
-        plat_type: 'Lark'
-        notify_title:  ${{ github.repository }} in ${{ github.event.action }}
-        notify_message: 'Project updated, please check projects online status'
+    - name: Send feishu message
       env:
-        NOTIFY_WEBHOOK: ${{ secrets.NOTIFY_WEBHOOK }}
-        NOTIFY_SIGNKEY: ${{ secrets.NOTIFY_SIGNKEY }}
+        ACTIONS_FEISHU_TAG: 'v1.3.1'
+        INPUT_WEBHOOK: "${{ secrets.NOTIFY_WEBHOOK }}"
+        INPUT_MESSAGE_TYPE: "post"
+        INPUT_TITLE: "${{ github.repository }} in ${{ github.event.action }}"
+        INPUT_CONTENT: "I'm message body\nfrom: ${{ github.repository }}"
+      run: |
+        wget -q https://github.com/xiachufang/actions-feishu/releases/download/${{ env.ACTIONS_FEISHU_TAG }}/linux-amd64-actions-feishu.tar.gz
+        tar zxf linux-amd64-actions-feishu.tar.gz feishu
+        ./feishu
