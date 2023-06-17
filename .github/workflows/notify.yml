@@ -1,0 +1,25 @@
+on:
+  workflow_run:
+    workflows: ["Go CI"]
+    types:
+      - requested
+      - in_progress
+      - completed
+
+name: IM Notification
+
+jobs:
+  notification:
+    name: IM Notification
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Notify to IM
+      uses: echoings/actions.notify@v0.1.0
+      with:
+        plat_type: 'Lark'
+        notify_title:  ${{ github.repository }} in ${{ github.event.action }}
+        notify_message: 'Project updated, please check projects online status'
+      env:
+        NOTIFY_WEBHOOK: ${{ secrets.NOTIFY_WEBHOOK }}
+        NOTIFY_SIGNKEY: ${{ secrets.NOTIFY_SIGNKEY }}
