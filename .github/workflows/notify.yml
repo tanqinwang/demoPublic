@@ -1,25 +1,39 @@
 on:
-  workflow_run:
-    workflows: ["Go CI"]
-    types:
-      - requested
-      - in_progress
-      - completed
+  workflow_dispatch:
 
-name: IM Notification
+name: Notification
 
 jobs:
   notification:
-    name: IM Notification
+    name: notification-1
     runs-on: ubuntu-latest
     steps:
-    - name: Send feishu message
+    - name: Send feishu message 1
       env:
         ACTIONS_FEISHU_TAG: 'v1.3.1'
         INPUT_WEBHOOK: "${{ secrets.NOTIFY_WEBHOOK }}"
         INPUT_MESSAGE_TYPE: "post"
         INPUT_TITLE: "${{ github.repository }} in ${{ github.event.action }}"
-        INPUT_CONTENT: "I'm message body\nfrom: ${{ github.repository }}"
+        INPUT_CONTENT: |
+          I'm message body
+
+          from: ${{ github.repository }}
+      run: |
+        wget -q https://github.com/xiachufang/actions-feishu/releases/download/${{ env.ACTIONS_FEISHU_TAG }}/linux-amd64-actions-feishu.tar.gz
+        tar zxf linux-amd64-actions-feishu.tar.gz feishu
+        ./feishu
+    - name: Send feishu message 2
+      env:
+        ACTIONS_FEISHU_TAG: 'v1.3.1'
+        INPUT_WEBHOOK: "${{ secrets.NOTIFY_WEBHOOK }}"
+        INPUT_MESSAGE_TYPE: "post"
+        INPUT_TITLE: New Pull Request
+        INPUT_CONTENT: |
+          @${{ github.event.pull_request.user.login }} opened pull request #${{ github.event.pull_request.number }}:
+
+              ${{ github.event.pull_request.title }}
+
+          See: https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
       run: |
         wget -q https://github.com/xiachufang/actions-feishu/releases/download/${{ env.ACTIONS_FEISHU_TAG }}/linux-amd64-actions-feishu.tar.gz
         tar zxf linux-amd64-actions-feishu.tar.gz feishu
