@@ -18,7 +18,9 @@ jobs:
   publish:
     needs: [build]
     runs-on: ubuntu-latest
-    environment: production
+    environment: 
+      name: production
+      url: https://github.com
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
