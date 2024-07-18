@@ -1,0 +1,48 @@
+# FROM php:7.4-fpm as min
+
+# # Install system packages
+# RUN apt-get update && \
+#     apt-get -y install \
+#             nginx-full \
+#             git \
+#             unzip \
+#         --no-install-recommends && \
+#         apt-get clean && \
+#         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+# COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
+# ARG EXTENTIONS="gd opcache bcmath calendar pcntl mysqli pdo_mysql sockets soap readline shmop xmlrpc zip redis @composer"
+# RUN install-php-extensions $EXTENTIONS
+
+# EXPOSE 80 443
+
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && apt-get -y install nginx wget vim
+
+RUN echo Y | apt install software-properties-common
+
+RUN echo Y | add-apt-repository ppa:ondrej/php
+
+RUN echo Y |  apt-get -y install php8.2 php8.2-fpm php8.2-xml php8.2-redis php8.2-zip  php8.2-gd php8.2-mysql php8.2-curl php8.2-grpc php8.2-protobuf
+
+
+# RUN echo Y |  update-alternatives --config php
+
+# WORKDIR  /var/www/basic
+# COPY yii2/basic .
+
+# WORKDIR /etc/nginx/conf.d
+# COPY hkhking-tool/docker/yii2.conf .
+
+WORKDIR /etc/cont-init.d/
+COPY start.sh .
+
+EXPOSE 8080 80
+
+ENTRYPOINT ["sh", "/etc/cont-init.d/start.sh"]
