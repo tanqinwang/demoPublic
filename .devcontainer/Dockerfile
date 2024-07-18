@@ -18,5 +18,5 @@
 
 # EXPOSE 80 443
 
-FROM tanqinwang/nginx-php-fpm-base-dev:latest
+FROM nginx-php-fpm-base:latest
 EXPOSE 80 443
